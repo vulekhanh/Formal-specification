@@ -11,9 +11,9 @@ public class MaxNumber
     {
         double num1, num2;
         
-        Console.WriteLine ("Enter the the first number: ");
+        Console.WriteLine ("Enter the first number: ");
         num1 = Convert.ToDouble(Console.ReadLine());
-        Console.WriteLine ("Enter the the second number: ");
+        Console.WriteLine ("Enter the second number: ");
         num2 = Convert.ToDouble(Console.ReadLine());
         
         double maxNumber = max(num1, num2);

@@ -1,4 +1,4 @@
-#include <iostream>;
+#include <iostream>
 using namespace std;
 
 double max(double a, double b){
@@ -10,9 +10,9 @@ double max(double a, double b){
 int main ()
 {
    double num1, num2;
-   cout << "Enter the the first number: ";
+   cout << "Enter the first number: ";
    cin >> num1;
-   cout << "Enter the the second number: "; 
+   cout << "Enter the second number: "; 
    cin >> num2;
    double maxNumber = max(num1, num2);
    if (num1 == maxNumber)
