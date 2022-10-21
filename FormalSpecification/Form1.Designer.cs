@@ -38,8 +38,8 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnConvertToCplusplus = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.outputTextbox = new System.Windows.Forms.RichTextBox();
-            this.inputTextbox = new System.Windows.Forms.RichTextBox();
+            this.inputTb = new System.Windows.Forms.RichTextBox();
+            this.outputTb = new System.Windows.Forms.RichTextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.TbFileName = new System.Windows.Forms.TextBox();
             this.btnClear = new System.Windows.Forms.Button();
@@ -80,7 +80,8 @@
             this.btnOpenFile.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnOpenFile.Name = "btnOpenFile";
             this.btnOpenFile.Size = new System.Drawing.Size(34, 43);
-            this.btnOpenFile.Text = "toolStripButton1";
+            this.btnOpenFile.Text = "Open Input";
+            this.btnOpenFile.Click += new System.EventHandler(this.btnOpenFile_Click);
             // 
             // btnSaveFile
             // 
@@ -89,7 +90,8 @@
             this.btnSaveFile.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSaveFile.Name = "btnSaveFile";
             this.btnSaveFile.Size = new System.Drawing.Size(34, 43);
-            this.btnSaveFile.Text = "toolStripButton2";
+            this.btnSaveFile.Text = "Save Output";
+            this.btnSaveFile.Click += new System.EventHandler(this.btnSaveFile_Click);
             // 
             // btnExit
             // 
@@ -98,7 +100,8 @@
             this.btnExit.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnExit.Name = "btnExit";
             this.btnExit.Size = new System.Drawing.Size(34, 43);
-            this.btnExit.Text = "toolStripButton3";
+            this.btnExit.Text = "Exit";
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
             // toolStripSeparator2
             // 
@@ -116,6 +119,7 @@
             this.btnConvertToCSharp.Name = "btnConvertToCSharp";
             this.btnConvertToCSharp.Size = new System.Drawing.Size(38, 32);
             this.btnConvertToCSharp.Text = "C#";
+            this.btnConvertToCSharp.Click += new System.EventHandler(this.btnConvertToCSharp_Click);
             // 
             // toolStripSeparator1
             // 
@@ -134,6 +138,7 @@
             this.btnConvertToCplusplus.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.btnConvertToCplusplus.Size = new System.Drawing.Size(51, 32);
             this.btnConvertToCplusplus.Text = "C++";
+            this.btnConvertToCplusplus.Click += new System.EventHandler(this.btnConvertToCplusplus_Click);
             // 
             // toolStripButton1
             // 
@@ -142,35 +147,38 @@
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(34, 43);
-            this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.Text = "Run";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
-            // outputTextbox
+            // inputTb
             // 
-            this.outputTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.inputTb.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.outputTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(51)))), ((int)(((byte)(51)))));
-            this.outputTextbox.Font = new System.Drawing.Font("Calibri", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.outputTextbox.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.outputTextbox.Location = new System.Drawing.Point(0, -3);
-            this.outputTextbox.Name = "outputTextbox";
-            this.outputTextbox.Size = new System.Drawing.Size(288, 379);
-            this.outputTextbox.TabIndex = 3;
-            this.outputTextbox.Text = "";
+            this.inputTb.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(51)))), ((int)(((byte)(51)))));
+            this.inputTb.Font = new System.Drawing.Font("Calibri", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.inputTb.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.inputTb.Location = new System.Drawing.Point(0, -3);
+            this.inputTb.Name = "inputTb";
+            this.inputTb.ReadOnly = true;
+            this.inputTb.Size = new System.Drawing.Size(288, 379);
+            this.inputTb.TabIndex = 3;
+            this.inputTb.Text = "";
             // 
-            // inputTextbox
+            // outputTb
             // 
-            this.inputTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.outputTb.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.inputTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(51)))), ((int)(((byte)(51)))));
-            this.inputTextbox.Font = new System.Drawing.Font("Calibri", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.inputTextbox.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.inputTextbox.Location = new System.Drawing.Point(-2, -3);
-            this.inputTextbox.Name = "inputTextbox";
-            this.inputTextbox.Size = new System.Drawing.Size(395, 382);
-            this.inputTextbox.TabIndex = 2;
-            this.inputTextbox.Text = "";
+            this.outputTb.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(51)))), ((int)(((byte)(51)))));
+            this.outputTb.Font = new System.Drawing.Font("Calibri", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.outputTb.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.outputTb.Location = new System.Drawing.Point(-2, -3);
+            this.outputTb.Name = "outputTb";
+            this.outputTb.ReadOnly = true;
+            this.outputTb.Size = new System.Drawing.Size(393, 382);
+            this.outputTb.TabIndex = 2;
+            this.outputTb.Text = "";
             // 
             // splitContainer1
             // 
@@ -183,11 +191,11 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.outputTextbox);
+            this.splitContainer1.Panel1.Controls.Add(this.inputTb);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.inputTextbox);
+            this.splitContainer1.Panel2.Controls.Add(this.outputTb);
             this.splitContainer1.Size = new System.Drawing.Size(689, 375);
             this.splitContainer1.SplitterDistance = 285;
             this.splitContainer1.SplitterIncrement = 2;
@@ -200,7 +208,7 @@
             this.TbFileName.Name = "TbFileName";
             this.TbFileName.Size = new System.Drawing.Size(100, 27);
             this.TbFileName.TabIndex = 7;
-            this.TbFileName.Text = "file1.txt";
+            this.TbFileName.Text = "file_name.txt";
             // 
             // btnClear
             // 
@@ -210,6 +218,7 @@
             this.btnClear.TabIndex = 8;
             this.btnClear.Text = "Clear";
             this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // btnCopy
             // 
@@ -219,6 +228,7 @@
             this.btnCopy.TabIndex = 9;
             this.btnCopy.Text = "Copy";
             this.btnCopy.UseVisualStyleBackColor = true;
+            this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
             // 
             // Form1
             // 
@@ -253,8 +263,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton btnConvertToCplusplus;
         private System.Windows.Forms.ToolStripButton btnExit;
-        private System.Windows.Forms.RichTextBox outputTextbox;
-        private System.Windows.Forms.RichTextBox inputTextbox;
+        private System.Windows.Forms.RichTextBox inputTb;
+        private System.Windows.Forms.RichTextBox outputTb;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.TextBox TbFileName;
