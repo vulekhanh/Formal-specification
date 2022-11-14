@@ -44,6 +44,7 @@
             this.TbFileName = new System.Windows.Forms.TextBox();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnCopy = new System.Windows.Forms.Button();
+            this.generateBtn = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -79,7 +80,7 @@
             this.btnOpenFile.Image = ((System.Drawing.Image)(resources.GetObject("btnOpenFile.Image")));
             this.btnOpenFile.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnOpenFile.Name = "btnOpenFile";
-            this.btnOpenFile.Size = new System.Drawing.Size(34, 43);
+            this.btnOpenFile.Size = new System.Drawing.Size(29, 45);
             this.btnOpenFile.Text = "Open Input";
             this.btnOpenFile.Click += new System.EventHandler(this.btnOpenFile_Click);
             // 
@@ -89,7 +90,7 @@
             this.btnSaveFile.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveFile.Image")));
             this.btnSaveFile.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSaveFile.Name = "btnSaveFile";
-            this.btnSaveFile.Size = new System.Drawing.Size(34, 43);
+            this.btnSaveFile.Size = new System.Drawing.Size(29, 45);
             this.btnSaveFile.Text = "Save Output";
             this.btnSaveFile.Click += new System.EventHandler(this.btnSaveFile_Click);
             // 
@@ -99,7 +100,7 @@
             this.btnExit.Image = ((System.Drawing.Image)(resources.GetObject("btnExit.Image")));
             this.btnExit.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(34, 43);
+            this.btnExit.Size = new System.Drawing.Size(29, 45);
             this.btnExit.Text = "Exit";
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
@@ -146,7 +147,7 @@
             this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(34, 43);
+            this.toolStripButton1.Size = new System.Drawing.Size(29, 45);
             this.toolStripButton1.Text = "Run";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
@@ -176,7 +177,7 @@
             this.outputTb.Location = new System.Drawing.Point(-2, -3);
             this.outputTb.Name = "outputTb";
             this.outputTb.ReadOnly = true;
-            this.outputTb.Size = new System.Drawing.Size(393, 382);
+            this.outputTb.Size = new System.Drawing.Size(365, 382);
             this.outputTb.TabIndex = 2;
             this.outputTb.Text = "";
             // 
@@ -206,7 +207,7 @@
             // 
             this.TbFileName.Location = new System.Drawing.Point(13, 52);
             this.TbFileName.Name = "TbFileName";
-            this.TbFileName.Size = new System.Drawing.Size(100, 27);
+            this.TbFileName.Size = new System.Drawing.Size(100, 24);
             this.TbFileName.TabIndex = 7;
             this.TbFileName.Text = "file_name.txt";
             // 
@@ -230,11 +231,22 @@
             this.btnCopy.UseVisualStyleBackColor = true;
             this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
             // 
+            // generateBtn
+            // 
+            this.generateBtn.Location = new System.Drawing.Point(119, 46);
+            this.generateBtn.Name = "generateBtn";
+            this.generateBtn.Size = new System.Drawing.Size(75, 33);
+            this.generateBtn.TabIndex = 9;
+            this.generateBtn.Text = "Generate";
+            this.generateBtn.UseVisualStyleBackColor = true;
+            this.generateBtn.Click += new System.EventHandler(this.btnCopy_Click);
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(711, 468);
+            this.Controls.Add(this.generateBtn);
             this.Controls.Add(this.btnCopy);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.TbFileName);
@@ -242,7 +254,7 @@
             this.Controls.Add(this.toolStrip1);
             this.Font = new System.Drawing.Font("Calibri", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Code generator";
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -270,6 +282,7 @@
         private System.Windows.Forms.TextBox TbFileName;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnCopy;
+        private System.Windows.Forms.Button generateBtn;
     }
 }
 
