@@ -1,26 +1,79 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.Common;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace FormalSpecification
 {
     public partial class Form1 : Form
     {
+        private static HandleHighlight handleHighlight = new HandleHighlight();
+
         public Form1()
         {
             InitializeComponent();
         }
 
         private void btnOpenFile_Click(object sender, EventArgs e)
+        {
+            OpenFile();
+        }
+        
+
+        private void btnSaveFile_Click(object sender, EventArgs e)
+        {
+            SaveFile();
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Exist();
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            inputTb.Clear();
+            outputTb.Clear();
+            TbFileName.Clear();
+        }
+
+        private void btnCopy_Click(object sender, EventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (string line in outputTb.Lines)
+                sb.AppendLine(line);
+
+            if(sb.Length > 0)
+            {
+                Clipboard.SetText(sb.ToString());
+            }
+        }
+
+        private void btnConvertToCSharp_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnConvertToCplusplus_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFile();
+        }
+
+        private void existToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Exist();
+        }
+
+        private void OpenFile()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
@@ -52,11 +105,23 @@ namespace FormalSpecification
                         // Printing the file contents
                         inputTb.Text = temp.GetString(b);
                     }
+
+                    inputTb.Text = inputTb.Text.Trim();
+
+                    inputTb.Text = String.Concat(
+                        inputTb.Lines[0].Where(c => !Char.IsWhiteSpace(c))
+                        ) + "\n" + inputTb.Lines[1].Substring(0, 3) + " " + String.Concat(
+                        inputTb.Lines[1].Substring(3).Where(c => !Char.IsWhiteSpace(c))
+                        ) + "\n" + inputTb.Lines[2].Substring(0, 4) + " " + String.Concat(
+                        inputTb.Lines[2].Substring(4).Where(c => !Char.IsWhiteSpace(c))
+                        );
+
+                    handleHighlight.Highlight(inputTb);
                 }
             }
         }
 
-        private void btnSaveFile_Click(object sender, EventArgs e)
+        private void SaveFile()
         {
             // Confirm Save
             DialogResult result;
@@ -109,46 +174,9 @@ namespace FormalSpecification
             }
         }
 
-        private void btnExit_Click(object sender, EventArgs e)
+        private void Exist()
         {
             this.Close();
-        }
-
-        private void btnClear_Click(object sender, EventArgs e)
-        {
-            inputTb.Clear();
-            outputTb.Clear();
-            TbFileName.Clear();
-        }
-
-        private void btnCopy_Click(object sender, EventArgs e)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            foreach (string line in outputTb.Lines)
-                sb.AppendLine(line);
-
-            Clipboard.SetText(sb.ToString());
-        }
-
-        private void btnConvertToCSharp_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnConvertToCplusplus_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
