@@ -1,0 +1,3 @@
+Ham (a:R*, n:N)kq:B
+pre 
+post kq = (VM i TH {1..n-1}.a(i) <= a(i+1))
