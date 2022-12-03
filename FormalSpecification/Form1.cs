@@ -1,16 +1,25 @@
-﻿using System;
+﻿using Microsoft.CSharp;
+using Microsoft.Win32;
+using System;
+using System.CodeDom.Compiler;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using Button = System.Windows.Forms.Button;
+using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
+using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
 
 namespace FormalSpecification
 {
     public partial class Form1 : Form
     {
-        private static HandleHighlight handleHighlight = new HandleHighlight();
+        private static HandleHighlight _handleHighlight = new HandleHighlight();
+
+        private static HandleGenerate _handleGenerate = new HandleGenerate();
 
         public Form1()
         {
@@ -21,7 +30,6 @@ namespace FormalSpecification
         {
             OpenFile();
         }
-        
 
         private void btnSaveFile_Click(object sender, EventArgs e)
         {
@@ -47,7 +55,7 @@ namespace FormalSpecification
             foreach (string line in outputTb.Lines)
                 sb.AppendLine(line);
 
-            if(sb.Length > 0)
+            if (sb.Length > 0)
             {
                 Clipboard.SetText(sb.ToString());
             }
@@ -55,12 +63,20 @@ namespace FormalSpecification
 
         private void btnConvertToCSharp_Click(object sender, EventArgs e)
         {
+            if (String.IsNullOrEmpty(inputTb.Text))
+            {
+                MessageBox.Show("Input Invalid!");
+                return;
+            }
 
+            _handleGenerate.SetInput(inputTb.Text);
+
+            outputTb.Text = _handleGenerate.Generate();
         }
 
         private void btnConvertToCplusplus_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -75,27 +91,11 @@ namespace FormalSpecification
 
         private void OpenFile()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                InitialDirectory = @"C:\",
-                Title = "Choose a file",
+                TbFileName.Text = openFileDialog1.SafeFileName.Substring(0, openFileDialog1.SafeFileName.LastIndexOf("."));
 
-                CheckFileExists = true,
-                CheckPathExists = true,
-
-                DefaultExt = "txt",
-                Filter = "txt files (*.txt)|*.txt",
-                FilterIndex = 2,
-                RestoreDirectory = true,
-
-                ReadOnlyChecked = true,
-                ShowReadOnly = true
-            };
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                TbFileName.Text = openFileDialog.FileName;
-                using (FileStream fs = File.Open(openFileDialog.FileName, FileMode.Open))
+                using (FileStream fs = File.Open(openFileDialog1.FileName, FileMode.Open))
                 {
                     byte[] b = new byte[1024];
                     UTF8Encoding temp = new UTF8Encoding(true);
@@ -108,15 +108,35 @@ namespace FormalSpecification
 
                     inputTb.Text = inputTb.Text.Trim();
 
-                    inputTb.Text = String.Concat(
-                        inputTb.Lines[0].Where(c => !Char.IsWhiteSpace(c))
-                        ) + "\n" + inputTb.Lines[1].Substring(0, 3) + " " + String.Concat(
-                        inputTb.Lines[1].Substring(3).Where(c => !Char.IsWhiteSpace(c))
-                        ) + "\n" + inputTb.Lines[2].Substring(0, 4) + " " + String.Concat(
-                        inputTb.Lines[2].Substring(4).Where(c => !Char.IsWhiteSpace(c))
-                        );
+                    string temp3 = "";
 
-                    handleHighlight.Highlight(inputTb);
+                    for (int i = 0; i < inputTb.Lines.Length; i++)
+                    {
+                        if (i == 0 || i > 2)
+                            temp3 += String.Concat(inputTb.Lines[i].Where(c => !Char.IsWhiteSpace(c)));
+
+                        if (i == 1)
+                        {
+                            temp3 += inputTb.Lines[i].Substring(0, 3) + " ";
+                            temp3 += String.Concat(inputTb.Lines[i].Substring(3).Where(c => !Char.IsWhiteSpace(c)));
+                        }
+
+                        if (i == 2)
+                        {
+                            temp3 += inputTb.Lines[2].Substring(0, 4) + " ";
+                            temp3 += String.Concat(inputTb.Lines[i].Substring(4).Where(c => !Char.IsWhiteSpace(c)));
+                        }
+
+                        if (i < 2)
+                        {
+                            temp3 += "\n";
+                        }
+
+                    }
+
+                    inputTb.Text = temp3;
+
+                    _handleHighlight.Highlight(inputTb);
                 }
             }
         }
@@ -177,6 +197,46 @@ namespace FormalSpecification
         private void Exist()
         {
             this.Close();
+        }
+
+        private void btnRun_Click(object sender, EventArgs e)
+        {
+            CSharpCodeProvider codeProvider = new CSharpCodeProvider();
+            ICodeCompiler icc = codeProvider.CreateCompiler();
+            string Output = "Out.exe";
+            ToolStripButton ButtonObject = (ToolStripButton)sender;
+
+            //lbStatus.Text = "";
+            System.CodeDom.Compiler.CompilerParameters parameters = new CompilerParameters();
+            //Make sure we generate an EXE, not a DLL
+            parameters.GenerateExecutable = true;
+            parameters.OutputAssembly = Output;
+            CompilerResults results = icc.CompileAssemblyFromSource(parameters, outputTb.Text);
+
+            if (results.Errors.Count > 0)
+            {
+                //lbStatus.ForeColor = Color.Red;
+                //lbStatus.Text = "Failed!";
+                string error_string = "";
+                foreach (CompilerError CompErr in results.Errors)
+                {
+                    error_string = outputTb.Text +
+                                "Line number " + CompErr.Line +
+                                ", Error Number: " + CompErr.ErrorNumber +
+                                ", '" + CompErr.ErrorText + ";" +
+                                Environment.NewLine + Environment.NewLine;
+                }
+                DialogResult error = MessageBox.Show(error_string, "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            }
+            else
+            {
+                //Successful Compile
+                //lbStatus.ForeColor = Color.Blue;
+                //lbStatus.Text = "Success!";
+                //If we clicked run then launch our EXE
+                if (ButtonObject.Text == "Run") Process.Start(Output);
+            }
         }
     }
 }
