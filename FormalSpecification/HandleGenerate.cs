@@ -180,6 +180,12 @@ namespace FormalSpecification
                 case "B":
                     result = "bool";
                     break;
+                case "N":
+                    result = "int";
+                    break;
+                case "R*":
+                    result = "float[]";
+                    break;
                 default:
                     result = "string";
                     break;

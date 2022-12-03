@@ -177,12 +177,12 @@ namespace FormalSpecification
         private string GeneratePostFunc()
         {
             string hihi = "";
-            string post = PostFunc.Post.Trim();
+            string post = PostFunc.Post.Trim().ToLower();
 
             string[] temp = post.Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
             MyIf[] myIfs = new MyIf[temp.Length];
 
-            if(temp.Length > 1)
+            if (temp.Length > 1)
             {
                 for (int i = 0; i < temp.Length; i++)
                 {
@@ -194,9 +194,34 @@ namespace FormalSpecification
 
                     string[] ifs = temp[i].Split(new[] { "&&", "(", ")" }, StringSplitOptions.RemoveEmptyEntries);
 
+                    string tempIfs = "";
+
+                    // Change "=" into "=="
+                    for(int j = 1; j < ifs.Count(); j++)
+                    {
+                        int index = ifs[j].IndexOf("=");
+
+                        if (index != -1)
+                        {
+                            if (ifs[j].IndexOf(">=") != -1 || ifs[j].IndexOf("<=") != -1 || ifs[j].IndexOf("==") != -1 || ifs[j].IndexOf("!=") != -1)
+                            {
+
+                            }
+                            else
+                                ifs[j] = ifs[j].Insert(index, "=");
+                        }
+
+                        tempIfs += ifs[j];
+
+                        if (j < ifs.Count() - 1)
+                        {
+                            tempIfs += "&&";
+                        }
+                    }
+
                     myIfs[i] = new MyIf()
                     {
-                        Condition = ifs[1],
+                        Condition = tempIfs,
                         Result = ifs[0]
                     };
                 }
@@ -217,7 +242,7 @@ namespace FormalSpecification
             {
                 result.Add(String.Format("\t\t\t{0} {2} = {1};", PostFunc.ReturnType, GetDefaultValueString(PostFunc.ReturnType), PostFunc.ReturnParam));
 
-                if (myIfs[0] != null) 
+                if (myIfs[0] != null)
                 {
                     for (int i = 0; i < myIfs.Length; i++)
                     {
@@ -225,7 +250,7 @@ namespace FormalSpecification
                         result.Add(String.Format("\t\t\t\t{0};", myIfs[i].Result));
                         result.Add("\t\t\t}");
 
-                        if(i < myIfs.Length - 1)
+                        if (i < myIfs.Length - 1)
                         {
                             result.Add("\t\t\telse");
                         }
@@ -234,14 +259,14 @@ namespace FormalSpecification
 
                 if (temp.Length == 1)
                 {
-                    result.Add("\t\t\t" + temp[0] + ";") ;
+                    result.Add("\t\t\t" + temp[0] + ";");
                 }
 
                 result.Add("\t\t\treturn " + PostFunc.ReturnParam + ";");
             }
             else
             {
-               
+
             }
 
             for (int i = 0; i < result.Count(); i++)
