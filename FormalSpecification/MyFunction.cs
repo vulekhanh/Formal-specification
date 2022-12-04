@@ -22,6 +22,8 @@ namespace FormalSpecification
 
         public string Post { get; set; }
 
+        public bool IsLoop { get; set; }
+
         public string GenerateConstructorFunc()
         {
             string hihi = "";
@@ -95,9 +97,9 @@ namespace FormalSpecification
             // Handle Loop Func
             if(isLoop)
             {
-                result.Add(String.Format("\t\t\tthis.{0} = new {1};", Parameters[0].Name, Parameters[0].Type));
+                result.Add(String.Format("\t\t\tthis.{0} = new {1}[{2}];", Parameters[0].Name, Parameters[0].Type.Substring(0, Parameters[0].Type.Length - 2),"n"));
                 result.Add(this.Content);
-                //result.Add(String.Format("for ( int {0}=0; {0}<n; {0}++) {{", "hihi"));
+                
             }
 
             result.Add("\t\t}");
@@ -174,5 +176,25 @@ namespace FormalSpecification
         public string startValue { get; set; }
 
         public string finishValue { get; set; }
+
+        public string conditionLine { get; set; }
+
+        public string contentLine { get; set; }
+
+        public string conditionParam { get; set; }
+
+        public string Content { get; set; }
+
+        public string GetFistLoopLine()
+        {
+            return String.Format("\t\t\tfor ( int {0}={1}; {0}<={2}; {0}++)", Param, startValue, finishValue);
+
+        }
+
+        public string GetFistInputLoopLine()
+        {
+            return String.Format("\t\t\tfor ( int {0}={1}; {0}<={2}; {0}++)", Param, startValue, finishValue.First());
+
+        }
     }
 }

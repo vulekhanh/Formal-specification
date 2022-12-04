@@ -28,7 +28,9 @@ namespace FormalSpecification
 
         public MyFunction PostFunc { get; set; }
 
-        public LoopFunc LoopFunc { get; set; }
+        public LoopFunc[] LoopFunc { get; set; }
+
+        public bool IsLoop { get; set; }
 
         public string Generate()
         {
@@ -49,7 +51,6 @@ namespace FormalSpecification
             {
                 result.Add(String.Format("\t\tpublic {0} {1};", MyParams[i].Type, MyParams[i].Name));
             }
-            result.Add("\n");
 
             result.Add(String.Format("\t\t//method"));
             // Generate basic function: input, ouput, constructor
@@ -73,6 +74,7 @@ namespace FormalSpecification
             var item = InputFunc.Parameters.Where(o => o.Type == "float[]");
             if (item != null)
             {
+                IsLoop = true;
                 InputFunc.Content = GenerateInputLoopFunc();
             }
             result.Add(InputFunc.GenerateInputFunc());
@@ -87,7 +89,14 @@ namespace FormalSpecification
             result.Add(PreFunc.GenerateFunc());
 
             // Generate post function
-            PostFunc.Content = GeneratePostFunc();
+            if (IsLoop)
+            {
+                PostFunc.Content = GenerateLoopPostFunc();
+            }
+            else
+            {
+                PostFunc.Content = GeneratePostFunc();
+            }
             result.Add(PostFunc.GenerateFunc());
 
             // Generate main function
@@ -103,6 +112,44 @@ namespace FormalSpecification
 
             result.Add("\t}");
             result.Add("}");
+
+            for (int i = 0; i < result.Count(); i++)
+            {
+                hihi += result[i].ToString();
+                hihi += "\n";
+            }
+
+            return hihi;
+        }
+
+        private string GenerateLoopPostFunc()
+        {
+            string hihi = "";
+
+            List<string> result = new List<string>();
+
+            // handle contentLine, convert a(i) into a[i]
+
+            for(int i = 0; i < LoopFunc.Length; i++)
+            {
+                LoopFunc[0].contentLine = LoopFunc[0].contentLine.Replace(LoopFunc[i].Param, LoopFunc[i].Param + "-1");
+            }
+            LoopFunc[0].contentLine = LoopFunc[0].contentLine.Replace("(", "[");
+            LoopFunc[0].contentLine = LoopFunc[0].contentLine.Replace(")", "]");
+
+            
+            for (var i = 0; i < LoopFunc.Count(); i++)
+            {
+                result.Add(LoopFunc[i].GetFistLoopLine());
+            }
+
+            result.Add("\t\t\t{");
+            result.Add(String.Format("\t\t\t\tif( {0} )", LoopFunc[0].contentLine));
+            result.Add("\t\t\t\t\tcontinue;");
+            result.Add("\t\t\t\telse");
+            result.Add("\t\t\t\t\treturn false;");
+            result.Add("\t\t\t}");
+            result.Add("\t\t\treturn true;");
 
             for (int i = 0; i < result.Count(); i++)
             {
@@ -132,33 +179,49 @@ namespace FormalSpecification
             }
 
             // Split bieuthuc into first loop line and content of it
-            //string[] LoopLines = temp[1].Split(new[] { "...", "." }, StringSplitOptions.RemoveEmptyEntries);
-
             int indexLastDot = temp[1].LastIndexOf('.');
 
             string firstLoopLine = temp[1].Substring(0, indexLastDot).Trim();
             string contentLoop = temp[1].Substring(indexLastDot+1, temp[1].Length - firstLoopLine.Length -1).Trim();
 
-            // Split fist loop line
-            string[] fistLoopCompos = firstLoopLine.Split(new[] { "TH" }, StringSplitOptions.RemoveEmptyEntries);
+            // get multi loop 
+            string[] loops = firstLoopLine.Split(new[] { "}" },  StringSplitOptions.RemoveEmptyEntries);
 
-            string conditionParam = fistLoopCompos[0].Substring(0, 2);
-            string loopParam = fistLoopCompos[0].Substring(2, fistLoopCompos[0].Length - 2);
+            loops[0] += "}";
+            loops[1] = loops[1].Remove(0, 1);
+            loops[1] += "}";
 
-            // get start and finish val
-            string[] startEnds = fistLoopCompos[1].Split(new[] { "..", "{", "}" }, StringSplitOptions.RemoveEmptyEntries);
-             
-            LoopFunc = new LoopFunc()
+            LoopFunc = new LoopFunc[loops.Length];
+
+            for(int i = 0; i < loops.Length; i++)
             {
-                Param = loopParam,
-                startValue = startEnds[0],
-                finishValue = startEnds[1],
-            };
+                string[] fistLoopCompos = loops[i].Split(new[] { "TH" }, StringSplitOptions.RemoveEmptyEntries);
 
-            result.Add(String.Format("\t\t\tfor ( int {0}=0; {0}<n; {0}++)", LoopFunc.Param));
+                string conditionParam = fistLoopCompos[0].Substring(0, 2);
+                string loopParam = fistLoopCompos[0].Substring(2, fistLoopCompos[0].Length - 2);
+
+                // get start and finish val
+                string[] startEnds = fistLoopCompos[1].Split(new[] { "..", "{", "}" }, StringSplitOptions.RemoveEmptyEntries);
+
+                LoopFunc[i] = new LoopFunc()
+                {
+                    Param = loopParam,
+                    startValue = startEnds[0],
+                    finishValue = startEnds[1],
+                    conditionParam = conditionParam,
+                };
+            }
+
+            LoopFunc[0].conditionLine = firstLoopLine;
+            LoopFunc[0].contentLine = contentLoop;
+
+            // Split fist loop line
+            
+
+            result.Add(LoopFunc[0].GetFistInputLoopLine());
             result.Add("\t\t\t{");
-            result.Add(String.Format("\t\t\t\tConsole.WriteLine(\"Nhap phan tu thu \" + {0} + \": \");", LoopFunc.Param));
-            result.Add(String.Format("\t\t\t\tthis.{0}[{2}] = {1}.Parse(Console.ReadLine());", MyParams[0].Name, MyParams[0].Type.Substring(0, MyParams[0].Type.Length - 2), LoopFunc.Param));
+            result.Add(String.Format("\t\t\t\tConsole.WriteLine(\"Nhap phan tu thu \" + {0} + \": \");", LoopFunc[0].Param));
+            result.Add(String.Format("\t\t\t\tthis.{0}[{2} - 1] = {1}.Parse(Console.ReadLine());", MyParams[0].Name, MyParams[0].Type.Substring(0, MyParams[0].Type.Length - 2), LoopFunc[0].Param));
             result.Add("\t\t\t}");
 
             for (int i = 0; i < result.Count(); i++)
@@ -180,7 +243,12 @@ namespace FormalSpecification
 
             for (int i = 0; i < MyParams.Count(); i++)
             {
-                temp += "ref mp." + MyParams[i].Name;
+                if (MyParams[i].Type != "float[]")
+                {
+                    temp += "ref ";
+                }
+
+                temp += "mp." +  MyParams[i].Name;
 
                 if (i < MyParams.Count() - 1)
                 {
@@ -214,6 +282,15 @@ namespace FormalSpecification
             string hihi = "";
 
             List<string> result = new List<string>();
+
+            if (IsLoop)
+            {
+                // check if param 2 > 0
+                result.Add(String.Format("\t\t\tif( {0} <= 0 )", MyParams[1].Name));
+                result.Add("\t\t\t{");
+                result.Add("\t\t\t\treturn 0;");
+                result.Add("\t\t\t}");
+            }
 
             if (!String.IsNullOrWhiteSpace(PreFunc.Pre) && !String.IsNullOrEmpty(PreFunc.Pre))
             {
