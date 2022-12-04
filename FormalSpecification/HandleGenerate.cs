@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace FormalSpecification
 {
@@ -46,7 +47,7 @@ namespace FormalSpecification
             }
             else
             {
-                // Show noti that input is not valid
+                MessageBox.Show("Input Invalid!");
             }
 
             return _result;
@@ -54,6 +55,11 @@ namespace FormalSpecification
 
         private bool IsValid()
         {
+            if(_inputLines.Count() < 3)
+            {
+                return false;
+            }
+
             if (_inputLine1.Count() > 1 && _inputLine3.Count() > 0)
             {
                 return true;

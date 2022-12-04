@@ -74,6 +74,8 @@ namespace FormalSpecification
             _handleGenerate.SetInput(inputTb.Text);
 
             outputTb.Text = _handleGenerate.Generate();
+
+            _handleHighlight.Highlight(outputTb);
         }
 
         private void btnConvertToCplusplus_Click(object sender, EventArgs e)
@@ -209,29 +211,27 @@ namespace FormalSpecification
             this.Close();
         }
 
+        [Obsolete]
         private void btnRun_Click(object sender, EventArgs e)
         {
             CSharpCodeProvider codeProvider = new CSharpCodeProvider();
-            ICodeCompiler icc = codeProvider.CreateCompiler();
-            string Output = "Out.exe";
+            ICodeCompiler compiler = codeProvider.CreateCompiler();
+            string output = "Out.exe";
             ToolStripButton ButtonObject = (ToolStripButton)sender;
 
-            //lbStatus.Text = "";
-            System.CodeDom.Compiler.CompilerParameters parameters = new CompilerParameters();
+            CompilerParameters parameters = new CompilerParameters();
+
             //Make sure we generate an EXE, not a DLL
             parameters.GenerateExecutable = true;
-            parameters.OutputAssembly = Output;
-            CompilerResults results = icc.CompileAssemblyFromSource(parameters, outputTb.Text);
+            parameters.OutputAssembly = output;
+            CompilerResults results = compiler.CompileAssemblyFromSource(parameters, outputTb.Text);
 
             if (results.Errors.Count > 0)
             {
-                //lbStatus.ForeColor = Color.Red;
-                //lbStatus.Text = "Failed!";
                 string error_string = "";
                 foreach (CompilerError CompErr in results.Errors)
                 {
-                    error_string = outputTb.Text +
-                                "Line number " + CompErr.Line +
+                    error_string = "Line number " + CompErr.Line +
                                 ", Error Number: " + CompErr.ErrorNumber +
                                 ", '" + CompErr.ErrorText + ";" +
                                 Environment.NewLine + Environment.NewLine;
@@ -242,10 +242,8 @@ namespace FormalSpecification
             else
             {
                 //Successful Compile
-                //lbStatus.ForeColor = Color.Blue;
-                //lbStatus.Text = "Success!";
                 //If we clicked run then launch our EXE
-                if (ButtonObject.Text == "Run") Process.Start(Output);
+                if (ButtonObject.Text == "Run") Process.Start(output);
             }
         }
     }

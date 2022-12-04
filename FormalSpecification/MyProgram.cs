@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace FormalSpecification
 {
@@ -46,13 +47,13 @@ namespace FormalSpecification
             result.Add("\t{");
 
             // Generate params
-            result.Add(String.Format("\t\t//property"));
             for (int i = 0; i < MyParams.Count(); i++)
             {
                 result.Add(String.Format("\t\tpublic {0} {1};", MyParams[i].Type, MyParams[i].Name));
             }
 
-            result.Add(String.Format("\t\t//method"));
+            result.Add("\n");
+
             // Generate basic function: input, ouput, constructor
             result.Add(String.Format("\t\tpublic {0}() {{", Constructor.Name));
             result.Add("\t\t}\n");
@@ -140,15 +141,26 @@ namespace FormalSpecification
 
             for (var i = 0; i < LoopFunc.Count(); i++)
             {
-                result.Add(LoopFunc[i].GetFistLoopLine());
-                if (i == 0 && LoopFunc.Count() > 1)
+                if (i > 0)
                 {
+                    result.Add("\t" + LoopFunc[i].GetFistLoopLine());
+                    result.Add("\t\t\t\t{");
+                }
+                else
+                {
+                    result.Add(LoopFunc[i].GetFistLoopLine());
                     result.Add("\t\t\t{");
                 }
+                
             }
 
-            result.Add("\t\t\t{");
-            result.Add(String.Format("\t\t\t\tif( {0} )", LoopFunc[0].contentLine));
+            string tab = "";
+            
+            if(LoopFunc.Count() > 1)
+            {
+                tab = "\t";
+            }
+            result.Add(String.Format("{1}\t\t\t\tif ({0})", LoopFunc[0].contentLine, tab));
 
             string ifCondition = "";
             string elseCondition = "";
@@ -175,20 +187,20 @@ namespace FormalSpecification
             {
                 for (int i = 0; i < LoopFunc.Count(); i++)
                 {
-                    if ( i == 0)
+                    if (i == 0)
                     {
                         if (LoopFunc[i].conditionParam == "VM")
                         {
-                            ifCondition = "break";
-                            elseCondition = "continue";
-                            finalReturn = "return true";
+                            ifCondition = "\tbreak";
+                            elseCondition = "\tcontinue";
+                            finalReturn = "\treturn true";
                             preElseCondition = "a";
                         }
                         else
                         {
-                            ifCondition = "return true";
-                            elseCondition = "continue";
-                            finalReturn = "return true";
+                            ifCondition = "\treturn true";
+                            elseCondition = "\tcontinue";
+                            finalReturn = "\treturn true";
                             preFinalCondition = "b";
                         }
                     }
@@ -201,38 +213,46 @@ namespace FormalSpecification
             }
 
             result.Add(String.Format("\t\t\t\t\t{0};", ifCondition));
-            result.Add("\t\t\t\telse");
-            result.Add("\t\t\t\t{");
-            
+            result.Add(String.Format("{0}\t\t\t\telse", tab));
+            result.Add(String.Format("{0}\t\t\t\t{{", tab));
+
 
             if (preElseCondition == "a")
             {
-                result.Add(String.Format("\t\t\t\t\tif( {0} == {1} )", LoopFunc[1].Param, MyParams[1].Name));
-                result.Add("\t\t\t\t\t\treturn false;");
+                result.Add(String.Format("\t\t\t\t\t\tif ({0} == {1})", LoopFunc[1].Param, MyParams[1].Name));
+                result.Add("\t\t\t\t\t\t\treturn false;");
             }
 
             result.Add(String.Format("\t\t\t\t\t{0};", elseCondition));
 
-            result.Add("\t\t\t\t}");
+            result.Add(String.Format("{0}\t\t\t\t }}", tab));
 
-            if(LoopFunc.Length > 1)
+            if (LoopFunc.Length > 1)
             {
-                result.Add("\t\t\t}");
+                result.Add("\t\t\t\t}");
             }
 
-            if(preFinalCondition == "b")
+            if (preFinalCondition == "b")
             {
-                result.Add(String.Format("\t\t\t\tif( {0} == {1} )", LoopFunc[0].Param, LoopFunc[0].finishValue));
+                result.Add(String.Format("\t\t\t\tif ({0} == {1})", LoopFunc[0].Param, LoopFunc[0].finishValue));
                 result.Add("\t\t\t\t\treturn false;");
             }
 
             result.Add("\t\t\t}");
-            result.Add(String.Format("\t\t\t{0};", finalReturn));
+            if(LoopFunc.Length > 1)
+            {
+                result.Add(String.Format("\t\t{0};", finalReturn));
+            }
+            else
+            {
+                result.Add(String.Format("\t\t\t{0};", finalReturn));
+            }
 
             for (int i = 0; i < result.Count(); i++)
             {
                 hihi += result[i].ToString();
-                hihi += "\n";
+                if(i < result.Count() - 1)  
+                    hihi += "\n";
             }
 
             return hihi;
@@ -266,7 +286,7 @@ namespace FormalSpecification
             string[] loops = firstLoopLine.Split(new[] { "}" }, StringSplitOptions.RemoveEmptyEntries);
 
             loops[0] += "}";
-            if(loops.Length > 1)
+            if (loops.Length > 1)
             {
                 loops[1] = loops[1].Remove(0, 1);
                 loops[1] += "}";
@@ -338,21 +358,24 @@ namespace FormalSpecification
             }
 
             result.Add(String.Format("\t\t\t{0} mp = new {0}();", ClassName));
-            result.Add(String.Format("\t\t\tmp.{0}({1});", InputFunc.Name, temp));
-            result.Add(String.Format("\t\t\tif( mp.{0}() == 1 ) {{", PreFunc.Name));
+            result.Add(String.Format("\t\t\tmp.{0}({1});\n", InputFunc.Name, temp));
+            result.Add(String.Format("\t\t\tif (mp.{0}() == 1) {{", PreFunc.Name));
             result.Add(String.Format("\t\t\t\t{0} {1} = {2};", PostFunc.ReturnType, PostFunc.ReturnParam, GetDefaultValueString(PostFunc.ReturnType)));
             result.Add(String.Format("\t\t\t\t{0} = mp.{1}();", PostFunc.ReturnParam, PostFunc.Name));
             result.Add(String.Format("\t\t\t\tmp.{0}({1});", OutputFunc.Name, PostFunc.ReturnParam));
             result.Add("\t\t\t}");
             result.Add(String.Format("\t\t\telse {{"));
-            result.Add(String.Format("\t\t\t\tConsole.WriteLine(\"Ban da nhap thong tin khong hop le, vui long nhap lai!\");"));
+            result.Add(String.Format("\t\t\t\tConsole.WriteLine(\"Thong tin khong hop le, vui long nhap lai!\");"));
             result.Add("\t\t\t}");
             result.Add("\t\t\tConsole.ReadLine();");
 
             for (int i = 0; i < result.Count(); i++)
             {
                 hihi += result[i].ToString();
-                hihi += "\n";
+                if (i < result.Count() - 1)
+                {
+                    hihi += "\n";
+                }
             }
 
             return hihi;
@@ -367,15 +390,25 @@ namespace FormalSpecification
             if (IsLoop)
             {
                 // check if param 2 > 0
-                result.Add(String.Format("\t\t\tif( {0} <= 0 )", MyParams[1].Name));
+                result.Add(String.Format("\t\t\tif ({0} <= 0)", MyParams[1].Name));
                 result.Add("\t\t\t{");
                 result.Add("\t\t\t\treturn 0;");
                 result.Add("\t\t\t}");
             }
 
+            // check if pre null
             if (!String.IsNullOrWhiteSpace(PreFunc.Pre) && !String.IsNullOrEmpty(PreFunc.Pre))
             {
-                result.Add(String.Format("\t\t\tif( {0} ) {{", PreFunc.Pre));
+
+                string[] pres = PreFunc.Pre.Split(new[] { "&&" }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (pres.Length >= 2)
+                {
+                    PreFunc.Pre = PreFunc.Pre.Trim().Remove(0, 1);
+                    PreFunc.Pre = PreFunc.Pre.Remove(PreFunc.Pre.Length - 1, 1);
+                }
+
+                result.Add(String.Format("\t\t\tif ({0}) {{", PreFunc.Pre));
                 result.Add("\t\t\t\treturn 1;");
                 result.Add("\t\t\t}");
                 result.Add("\t\t\telse{");
@@ -390,7 +423,10 @@ namespace FormalSpecification
             for (int i = 0; i < result.Count(); i++)
             {
                 hihi += result[i].ToString();
-                hihi += "\n";
+                if (i != result.Count - 1)
+                {
+                    hihi += "\n";
+                }
             }
 
             return hihi;
@@ -400,6 +436,12 @@ namespace FormalSpecification
         {
             string hihi = "";
             string post = PostFunc.Post.Trim().ToLower();
+
+            if (String.IsNullOrEmpty(post) == true)
+            {
+                MessageBox.Show("Post is invalid!");
+                return "";
+            }
 
             string[] temp = post.Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
             MyIf[] myIfs = new MyIf[temp.Length];
@@ -468,7 +510,7 @@ namespace FormalSpecification
                 {
                     for (int i = 0; i < myIfs.Length; i++)
                     {
-                        result.Add(String.Format("\t\t\tif( {0} ) {{", myIfs[i].Condition));
+                        result.Add(String.Format("\t\t\tif ({0}) {{", myIfs[i].Condition));
                         result.Add(String.Format("\t\t\t\t{0};", myIfs[i].Result));
                         result.Add("\t\t\t}");
 
@@ -494,7 +536,10 @@ namespace FormalSpecification
             for (int i = 0; i < result.Count(); i++)
             {
                 hihi += result[i].ToString();
-                hihi += "\n";
+                if (i != result.Count - 1)
+                {
+                    hihi += "\n";
+                }
             }
 
             return hihi;
