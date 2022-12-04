@@ -225,7 +225,6 @@ namespace FormalSpecification
                 hihi += result[i].ToString();
                 hihi += "\n";
             }
-
             return hihi;
         }
 
@@ -323,7 +322,7 @@ namespace FormalSpecification
                 }
             }
 
-            result.Add(String.Format("\t\t\t{0} mp = new {0}();", ClassName));
+            result.Add(String.Format("\t\t\t{0} mp;", ClassName));
             result.Add(String.Format("\t\t\tmp.{0}({1});", InputFunc.Name, temp));
             result.Add(String.Format("\t\t\tif( mp.{0}() == 1 ) {{", PreFunc.Name));
             result.Add(String.Format("\t\t\t\t{0} {1} = {2};", PostFunc.ReturnType, PostFunc.ReturnParam, GetDefaultValueString(PostFunc.ReturnType)));
@@ -482,7 +481,6 @@ namespace FormalSpecification
                 hihi += result[i].ToString();
                 hihi += "\n";
             }
-
             return hihi;
         }
 

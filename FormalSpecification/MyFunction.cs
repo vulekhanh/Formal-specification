@@ -141,8 +141,19 @@ namespace FormalSpecification
             string hihi = "";
             List<string> result = new List<string>();
             string temp = "";
+            if (Parameters != null && Parameters.Length > 0)
+            {
+                for (int i = 0; i < Parameters.Count(); i++)
+                {
+                    temp += Parameters[i].Type + " " + Parameters[i].Name;
 
-            
+                    if (i < Parameters.Count() - 1)
+                    {
+                        temp += ", ";
+                    }
+                }
+            }
+
 
             result.Add(String.Format("\t\tpublic {0} {1}({2}) {{", ReturnType, Name, temp));
             result.Add((String.IsNullOrEmpty(Content) == false) ? Content : "");

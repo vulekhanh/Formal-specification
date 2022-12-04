@@ -43,7 +43,7 @@ namespace FormalSpecification
 
             result.Add(String.Format("\t\t {0}({1}) {{", Name, temp));
             for (int i = 0; i < Parameters.Count(); i++)
-                result.Add(String.Format("\t\t\tthis.{0} = {0};", Parameters[i].Name));
+                result.Add(String.Format("\t\t\tthis->{0} = {0};", Parameters[i].Name));
             result.Add("\t\t}");
 
             for (int i = 0; i < result.Count(); i++)
