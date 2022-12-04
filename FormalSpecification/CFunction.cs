@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FormalSpecification
 {
-    internal class MyFunction
+    internal class CFunction
     {
         public string Name { get; set; }
 
@@ -18,7 +18,7 @@ namespace FormalSpecification
 
         public string Content { get; set; }
 
-        public string Pre { get; set; } 
+        public string Pre { get; set; }
 
         public string Post { get; set; }
 
@@ -35,13 +35,13 @@ namespace FormalSpecification
             {
                 temp += Parameters[i].Type + " " + Parameters[i].Name;
 
-                if(i < Parameters.Count() - 1)
+                if (i < Parameters.Count() - 1)
                 {
                     temp += ", ";
                 }
             }
 
-            result.Add(String.Format("\t\tpublic {0}({1}) {{",Name, temp));
+            result.Add(String.Format("\t\t {0}({1}) {{", Name, temp));
             for (int i = 0; i < Parameters.Count(); i++)
                 result.Add(String.Format("\t\t\tthis.{0} = {0};", Parameters[i].Name));
             result.Add("\t\t}");
@@ -52,7 +52,7 @@ namespace FormalSpecification
                 hihi += "\n";
             }
 
-            return hihi; 
+            return hihi;
         }
 
         public string GenerateInputFunc()
@@ -64,9 +64,7 @@ namespace FormalSpecification
 
             for (int i = 0; i < Parameters.Count(); i++)
             {
-                if (Parameters[i].Type != "float[]") {
-                    temp += "ref ";
-                }
+                
                 temp += Parameters[i].Type + " " + Parameters[i].Name;
 
                 if (i < Parameters.Count() - 1)
@@ -75,7 +73,7 @@ namespace FormalSpecification
                 }
             }
 
-            result.Add(String.Format("\t\tpublic {0} {1}({2}) {{", ReturnType, Name, temp));
+            result.Add(String.Format("\t\t{0} {1}({2}) {{", ReturnType, Name, temp));
 
             bool isLoop = false;
 
@@ -89,17 +87,17 @@ namespace FormalSpecification
 
                 if (Parameters[i].Type != "float[]")
                 {
-                    result.Add(String.Format("\t\t\tConsole.WriteLine(\"Nhap {0}: \");", Parameters[i].Name));
-                    result.Add(String.Format("\t\t\t{0} = {1}.Parse(Console.ReadLine());", Parameters[i].Name, Parameters[i].Type));
+                    result.Add(String.Format("\t\t\tcout<<\"Nhap {0}: \";", Parameters[i].Name));
+                    result.Add(String.Format("\t\t\tcin >> {0};", Parameters[i].Name, Parameters[i].Type));
                 }
             }
 
             // Handle Loop Func
-            if(isLoop)
+            if (isLoop)
             {
-                result.Add(String.Format("\t\t\tthis.{0} = new {1}[{2}];", Parameters[0].Name, Parameters[0].Type.Substring(0, Parameters[0].Type.Length - 2),"n"));
+                result.Add(String.Format("\t\t\tthis.{0} = new {1}[{2}];", Parameters[0].Name, Parameters[0].Type.Substring(0, Parameters[0].Type.Length - 2), "n"));
                 result.Add(this.Content);
-                
+
             }
 
             result.Add("\t\t}");
@@ -119,12 +117,11 @@ namespace FormalSpecification
             List<string> result = new List<string>();
             string temp = "";
 
-            
+
             temp = Parameters[0].Type + " " + Parameters[0].Name;
 
-
-            result.Add(String.Format("\t\tpublic {0} {1}({2}) {{", ReturnType, Name, temp));
-            result.Add(String.Format("\t\t\tConsole.WriteLine(\"Ket qua la : {{0}}\", {0});", Parameters[0].Name));
+            result.Add(String.Format("\t\t {0} {1}({2}) {{", ReturnType, Name, temp));
+            result.Add(String.Format("\t\t\tcout << \"Ket qua la :\" << {0};", Parameters[0].Name));
             result.Add("\t\t}");
 
             for (int i = 0; i < result.Count(); i++)
@@ -142,9 +139,9 @@ namespace FormalSpecification
             List<string> result = new List<string>();
             string temp = "";
 
-            
 
-            result.Add(String.Format("\t\tpublic {0} {1}({2}) {{", ReturnType, Name, temp));
+
+            result.Add(String.Format("\t\t {0} {1}({2}) {{", ReturnType, Name, temp));
             result.Add((String.IsNullOrEmpty(Content) == false) ? Content : "");
             result.Add("\t\t}");
 
@@ -157,33 +154,5 @@ namespace FormalSpecification
             return hihi;
         }
     }
-
-    public class LoopFunc{
-
-        public string Param { get; set; }
-
-        public string startValue { get; set; }
-
-        public string finishValue { get; set; }
-
-        public string conditionLine { get; set; }
-
-        public string contentLine { get; set; }
-
-        public string conditionParam { get; set; }
-
-        public string Content { get; set; }
-
-        public string GetFistLoopLine()
-        {
-            return String.Format("\t\t\tfor ( int {0}={1}; {0}<={2}; {0}++)", Param, startValue, finishValue);
-
-        }
-
-        public string GetFistInputLoopLine()
-        {
-            return String.Format("\t\t\tfor ( int {0}={1}; {0}<={2}; {0}++)", Param, startValue, finishValue.First());
-
-        }
-    }
+    
 }

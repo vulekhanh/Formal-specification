@@ -57,6 +57,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CFunction.cs" />
+    <Compile Include="CPlusPlusProgram.cs" />
+    <Compile Include="CPlusPlusHandling.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

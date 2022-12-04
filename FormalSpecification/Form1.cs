@@ -20,6 +20,8 @@ namespace FormalSpecification
         private static HandleHighlight _handleHighlight = new HandleHighlight();
 
         private static HandleGenerate _handleGenerate = new HandleGenerate();
+        
+        private static CPlusPlusHandling cPlusPlusHandling = new CPlusPlusHandling();
 
         public Form1()
         {
@@ -76,7 +78,15 @@ namespace FormalSpecification
 
         private void btnConvertToCplusplus_Click(object sender, EventArgs e)
         {
+            if (String.IsNullOrEmpty(inputTb.Text))
+            {
+                MessageBox.Show("Input Invalid!");
+                return;
+            }
 
+            cPlusPlusHandling.SetInput(inputTb.Text);
+
+            outputTb.Text = cPlusPlusHandling.Generate();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
