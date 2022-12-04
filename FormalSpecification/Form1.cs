@@ -43,22 +43,12 @@ namespace FormalSpecification
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            inputTb.Clear();
-            outputTb.Clear();
-            TbFileName.Clear();
+            Clear();
         }
 
         private void btnCopy_Click(object sender, EventArgs e)
         {
-            StringBuilder sb = new StringBuilder();
-
-            foreach (string line in outputTb.Lines)
-                sb.AppendLine(line);
-
-            if (sb.Length > 0)
-            {
-                Clipboard.SetText(sb.ToString());
-            }
+            Copy();
         }
 
         private void btnConvertToCSharp_Click(object sender, EventArgs e)
@@ -81,14 +71,39 @@ namespace FormalSpecification
 
         }
 
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        private void openToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             OpenFile();
         }
 
-        private void existToolStripMenuItem_Click(object sender, EventArgs e)
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFile();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Exist();
+        }
+
+        private void clearAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Clear();
+        }
+
+        private void copyOutputToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Copy();
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Clear();
+        }
+
+        private void NewToolStripButton_Click(object sender, EventArgs e)
+        {
+            Clear();
         }
 
         private void OpenFile()
@@ -135,6 +150,15 @@ namespace FormalSpecification
                         }
 
                     }
+
+                    //string temp4 = "";
+                    //for (int i = 3; i < inputTb.Lines.Length; i++)
+                    //{
+                    //    temp4 += inputTb.Lines[i].ToString();
+                    //}
+                    //string[] temp5 = temp4.Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
+
+                    //temp3 += temp5[0] + "\n" + temp5[1];
 
                     inputTb.Text = temp3;
 
@@ -201,6 +225,26 @@ namespace FormalSpecification
             this.Close();
         }
 
+        private void Clear()
+        {
+            inputTb.Clear();
+            outputTb.Clear();
+            TbFileName.Clear();
+        }
+
+        private void Copy()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (string line in outputTb.Lines)
+                sb.AppendLine(line);
+
+            if (sb.Length > 0)
+            {
+                Clipboard.SetText(sb.ToString());
+            }
+        }
+
         [Obsolete]
         private void btnRun_Click(object sender, EventArgs e)
         {
@@ -234,7 +278,7 @@ namespace FormalSpecification
                 //Successful Compile
                 //If we clicked run then launch our EXE
                 if (ButtonObject.Text == "Run") Process.Start(output);
-            }
-        }
+            }        }
+
     }
 }

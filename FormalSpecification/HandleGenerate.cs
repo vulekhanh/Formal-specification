@@ -36,12 +36,11 @@ namespace FormalSpecification
         public string Generate()
         {
             // Split into 3 lines
-            SplitInput(_input);
+            bool isOk = SplitInput(_input);
 
             // Check if input valid
-            bool isValid = IsValid();
 
-            if (isValid)
+            if (isOk)
             {
                 _result = GenerateCode();
             }
@@ -53,30 +52,33 @@ namespace FormalSpecification
             return _result;
         }
 
-        private bool IsValid()
+        private bool SplitInput(string input)
         {
+            _inputLines = _input.Split(new[] { "\n" }, StringSplitOptions.None);
+
             if(_inputLines.Count() < 3)
             {
                 return false;
             }
 
-            if (_inputLine1.Count() > 1 && _inputLine3.Count() > 0)
+            for(int i=0; i<_inputLines.Length; i++)
             {
-                return true;
+                if (String.IsNullOrEmpty(_inputLines[i]))
+                {
+                    return false;
+                }
             }
-
-            return false;
-        }
-
-        private void SplitInput(string input)
-        {
-            _inputLines = _input.Split(new[] { "\n" }, StringSplitOptions.None);
 
             _inputLine1 = _inputLines[0].Split(new[] { "(" , ")" }, StringSplitOptions.None); // bat loi
             _inputLine2 = _inputLines[1].Split(new[] { "pre" }, StringSplitOptions.RemoveEmptyEntries);
             _inputLine3 = _inputLines[2].Split(new[] { "post" }, StringSplitOptions.RemoveEmptyEntries);
 
-            return;
+            if ( String.IsNullOrEmpty(_inputLine1[0]) || String.IsNullOrEmpty(_inputLine1[1]) || String.IsNullOrEmpty(_inputLine1[2]) || _inputLine2.Count() == 0 || _inputLine3.Count() == 0)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private string GenerateCode()
