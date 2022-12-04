@@ -187,13 +187,13 @@ namespace FormalSpecification
 
         public string GetFistLoopLine()
         {
-            return String.Format("\t\t\tfor ( int {0}={1}; {0}<={2}; {0}++)", Param, startValue, finishValue);
+            return String.Format("\t\t\tfor (int {0}={1}; {0}<={2}; {0}++)", Param, startValue, finishValue);
 
         }
 
         public string GetFistInputLoopLine()
         {
-            return String.Format("\t\t\tfor ( int {0}={1}; {0}<={2}; {0}++)", Param, startValue, finishValue.First());
+            return String.Format("\t\t\tfor (int {0}={1}; {0}<={2}; {0}++)", Param, startValue, finishValue.First());
 
         }
     }

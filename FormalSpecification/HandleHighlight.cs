@@ -16,7 +16,7 @@ namespace FormalSpecification
 
                 pos = tb.Find(text, pos, RichTextBoxFinds.None);
 
-                if (text == ":R")
+                if (text == ":R" || text == ":Z" || text == ":B" || text == ":char*")
                 {
                     if (pos > 0)
                     {
@@ -43,7 +43,8 @@ namespace FormalSpecification
 
         public void Highlight(RichTextBox rich)
         {
-            string[] list = { "<", "=", ">", "!" };
+
+            string[] list = { "<", "==", ">", ">=", "<=", "!=" };
 
             foreach(var i in list)
             {
@@ -57,18 +58,53 @@ namespace FormalSpecification
                 ChangeTextColor(i, Color.RosyBrown, rich);
             }
 
-            string[] list3 = { ":R" };
+            string[] list3 = { ":R", ":Z", ":B", ":char*" };
 
             foreach (var i in list3)
             {
                 ChangeTextColor(i, Color.DarkRed, rich);
             }
 
-            string[] list1 = { "pre", "post" };
+            string[] list1 = { "pre ", "post ", "if", "else" };
 
             foreach (var i in list1)
             {
                 ChangeTextColor(i, Color.DarkViolet, rich);
+            }
+
+            string[] listGeneral = { "Program" };
+
+            foreach (var i in listGeneral)
+            {
+                ChangeTextColor(i, Color.DarkRed, rich);
+            }
+
+            string[] listGeneral1 = { "namespace", "class", "public", "void", "float", "float[]", "int", "string", "string[]", "static", "ref", "return", "new" };
+
+            foreach (var i in listGeneral1)
+            {
+                ChangeTextColor(i, Color.Blue, rich);
+            }
+
+            string[] listYellow = { "this", "WriteLine", "ReadLine" };
+
+            foreach (var i in listYellow)
+            {
+                ChangeTextColor(i, Color.Orange, rich);
+            }
+
+            string[] listGreen = { "Console" };
+
+            foreach (var i in listGreen)
+            {
+                ChangeTextColor(i, Color.Green, rich);
+            }
+
+            string[] listBlack = { "FormalSpecification" };
+
+            foreach (var i in listBlack)
+            {
+                ChangeTextColor(i, Color.Black, rich);
             }
         }
     }
