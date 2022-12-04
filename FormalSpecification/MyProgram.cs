@@ -72,7 +72,7 @@ namespace FormalSpecification
             // Input Func
             InputFunc.Parameters = MyParams;
             var item = InputFunc.Parameters.Where(o => o.Type == "float[]");
-            if (item != null)
+            if (item.Count() > 0)
             {
                 IsLoop = true;
                 InputFunc.Content = GenerateInputLoopFunc();
@@ -130,26 +130,104 @@ namespace FormalSpecification
 
             // handle contentLine, convert a(i) into a[i]
 
-            for(int i = 0; i < LoopFunc.Length; i++)
+            for (int i = 0; i < LoopFunc.Length; i++)
             {
                 LoopFunc[0].contentLine = LoopFunc[0].contentLine.Replace(LoopFunc[i].Param, LoopFunc[i].Param + "-1");
             }
             LoopFunc[0].contentLine = LoopFunc[0].contentLine.Replace("(", "[");
             LoopFunc[0].contentLine = LoopFunc[0].contentLine.Replace(")", "]");
 
-            
+
             for (var i = 0; i < LoopFunc.Count(); i++)
             {
                 result.Add(LoopFunc[i].GetFistLoopLine());
+                if (i == 0 && LoopFunc.Count() > 1)
+                {
+                    result.Add("\t\t\t{");
+                }
             }
 
             result.Add("\t\t\t{");
             result.Add(String.Format("\t\t\t\tif( {0} )", LoopFunc[0].contentLine));
-            result.Add("\t\t\t\t\tcontinue;");
+
+            string ifCondition = "";
+            string elseCondition = "";
+            string finalReturn = "";
+            string preElseCondition = "";
+            string preFinalCondition = "";
+
+            if (LoopFunc.Count() == 1)
+            {
+                if (LoopFunc[0].conditionParam == "VM")
+                {
+                    ifCondition = "continue";
+                    elseCondition = "return false";
+                    finalReturn = "return true";
+                }
+                else
+                {
+                    ifCondition = "return true";
+                    elseCondition = "continue";
+                    finalReturn = "return true";
+                }
+            }
+            else
+            {
+                for (int i = 0; i < LoopFunc.Count(); i++)
+                {
+                    if ( i == 0)
+                    {
+                        if (LoopFunc[i].conditionParam == "VM")
+                        {
+                            ifCondition = "break";
+                            elseCondition = "continue";
+                            finalReturn = "return true";
+                            preElseCondition = "a";
+                        }
+                        else
+                        {
+                            ifCondition = "return true";
+                            elseCondition = "continue";
+                            finalReturn = "return true";
+                            preFinalCondition = "b";
+                        }
+                    }
+                    else
+                    {
+
+                    }
+
+                }
+            }
+
+            result.Add(String.Format("\t\t\t\t\t{0};", ifCondition));
             result.Add("\t\t\t\telse");
-            result.Add("\t\t\t\t\treturn false;");
+            result.Add("\t\t\t\t{");
+            
+
+            if (preElseCondition == "a")
+            {
+                result.Add(String.Format("\t\t\t\t\tif( {0} == {1} )", LoopFunc[1].Param, MyParams[1].Name));
+                result.Add("\t\t\t\t\t\treturn false;");
+            }
+
+            result.Add(String.Format("\t\t\t\t\t{0};", elseCondition));
+
+            result.Add("\t\t\t\t}");
+
+            if(LoopFunc.Length > 1)
+            {
+                result.Add("\t\t\t}");
+            }
+
+            if(preFinalCondition == "b")
+            {
+                result.Add(String.Format("\t\t\t\tif( {0} == {1} )", LoopFunc[0].Param, LoopFunc[0].finishValue));
+                result.Add("\t\t\t\t\treturn false;");
+            }
+
             result.Add("\t\t\t}");
-            result.Add("\t\t\treturn true;");
+            result.Add(String.Format("\t\t\t{0};", finalReturn));
 
             for (int i = 0; i < result.Count(); i++)
             {
@@ -182,18 +260,21 @@ namespace FormalSpecification
             int indexLastDot = temp[1].LastIndexOf('.');
 
             string firstLoopLine = temp[1].Substring(0, indexLastDot).Trim();
-            string contentLoop = temp[1].Substring(indexLastDot+1, temp[1].Length - firstLoopLine.Length -1).Trim();
+            string contentLoop = temp[1].Substring(indexLastDot + 1, temp[1].Length - firstLoopLine.Length - 1).Trim();
 
             // get multi loop 
-            string[] loops = firstLoopLine.Split(new[] { "}" },  StringSplitOptions.RemoveEmptyEntries);
+            string[] loops = firstLoopLine.Split(new[] { "}" }, StringSplitOptions.RemoveEmptyEntries);
 
             loops[0] += "}";
-            loops[1] = loops[1].Remove(0, 1);
-            loops[1] += "}";
+            if(loops.Length > 1)
+            {
+                loops[1] = loops[1].Remove(0, 1);
+                loops[1] += "}";
+            }
 
             LoopFunc = new LoopFunc[loops.Length];
 
-            for(int i = 0; i < loops.Length; i++)
+            for (int i = 0; i < loops.Length; i++)
             {
                 string[] fistLoopCompos = loops[i].Split(new[] { "TH" }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -216,7 +297,7 @@ namespace FormalSpecification
             LoopFunc[0].contentLine = contentLoop;
 
             // Split fist loop line
-            
+
 
             result.Add(LoopFunc[0].GetFistInputLoopLine());
             result.Add("\t\t\t{");
@@ -248,7 +329,7 @@ namespace FormalSpecification
                     temp += "ref ";
                 }
 
-                temp += "mp." +  MyParams[i].Name;
+                temp += "mp." + MyParams[i].Name;
 
                 if (i < MyParams.Count() - 1)
                 {
@@ -338,7 +419,7 @@ namespace FormalSpecification
                     string tempIfs = "";
 
                     // Change "=" into "=="
-                    for(int j = 1; j < ifs.Count(); j++)
+                    for (int j = 1; j < ifs.Count(); j++)
                     {
                         int index = ifs[j].IndexOf("=");
 
