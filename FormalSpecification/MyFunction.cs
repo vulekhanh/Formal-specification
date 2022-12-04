@@ -62,7 +62,10 @@ namespace FormalSpecification
 
             for (int i = 0; i < Parameters.Count(); i++)
             {
-                temp += "ref " + Parameters[i].Type + " " + Parameters[i].Name;
+                if (Parameters[i].Type != "float[]") {
+                    temp += "ref ";
+                }
+                temp += Parameters[i].Type + " " + Parameters[i].Name;
 
                 if (i < Parameters.Count() - 1)
                 {
@@ -71,11 +74,32 @@ namespace FormalSpecification
             }
 
             result.Add(String.Format("\t\tpublic {0} {1}({2}) {{", ReturnType, Name, temp));
+
+            bool isLoop = false;
+
             for (int i = 0; i < Parameters.Count(); i++)
             {
-                result.Add(String.Format("\t\t\tConsole.WriteLine(\"Nhap {0}: \");", Parameters[i].Name));
-                result.Add(String.Format("\t\t\t{0} = {1}.Parse(Console.ReadLine());", Parameters[i].Name, Parameters[i].Type));
+                // Check if a Loop func
+                if (i == 0 && Parameters[i].Type == "float[]")
+                {
+                    isLoop = true;
+                }
+
+                if (Parameters[i].Type != "float[]")
+                {
+                    result.Add(String.Format("\t\t\tConsole.WriteLine(\"Nhap {0}: \");", Parameters[i].Name));
+                    result.Add(String.Format("\t\t\t{0} = {1}.Parse(Console.ReadLine());", Parameters[i].Name, Parameters[i].Type));
+                }
             }
+
+            // Handle Loop Func
+            if(isLoop)
+            {
+                result.Add(String.Format("\t\t\tthis.{0} = new {1};", Parameters[0].Name, Parameters[0].Type));
+                result.Add(this.Content);
+                //result.Add(String.Format("for ( int {0}=0; {0}<n; {0}++) {{", "hihi"));
+            }
+
             result.Add("\t\t}");
 
             for (int i = 0; i < result.Count(); i++)
@@ -141,5 +165,14 @@ namespace FormalSpecification
 
             return hihi;
         }
+    }
+
+    public class LoopFunc{
+
+        public string Param { get; set; }
+
+        public string startValue { get; set; }
+
+        public string finishValue { get; set; }
     }
 }
