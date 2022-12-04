@@ -96,7 +96,7 @@ namespace FormalSpecification
                 PostFunc.Content = GeneratePostFunc();
             }
             result.Add(PostFunc.GenerateFunc());
-
+            result.Add("};");
             // Generate main function
             MainFunc.Parameters = new MyParams[1];
             MainFunc.ReturnType = "int";
