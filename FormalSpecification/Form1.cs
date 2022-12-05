@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Button = System.Windows.Forms.Button;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
@@ -20,6 +21,8 @@ namespace FormalSpecification
         private static HandleHighlight _handleHighlight = new HandleHighlight();
 
         private static HandleGenerate _handleGenerate = new HandleGenerate();
+        
+        private static CPlusPlusHandling cPlusPlusHandling = new CPlusPlusHandling();
 
         public Form1()
         {
@@ -68,7 +71,15 @@ namespace FormalSpecification
 
         private void btnConvertToCplusplus_Click(object sender, EventArgs e)
         {
+            if (String.IsNullOrEmpty(inputTb.Text))
+            {
+                MessageBox.Show("Input Invalid!");
+                return;
+            }
 
+            cPlusPlusHandling.SetInput(inputTb.Text);
+
+            outputTb.Text = cPlusPlusHandling.Generate();
         }
 
         private void openToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -248,37 +259,45 @@ namespace FormalSpecification
         [Obsolete]
         private void btnRun_Click(object sender, EventArgs e)
         {
-            CSharpCodeProvider codeProvider = new CSharpCodeProvider();
-            ICodeCompiler compiler = codeProvider.CreateCompiler();
-            string output = "Out.exe";
-            ToolStripButton ButtonObject = (ToolStripButton)sender;
-
-            CompilerParameters parameters = new CompilerParameters();
-
-            //Make sure we generate an EXE, not a DLL
-            parameters.GenerateExecutable = true;
-            parameters.OutputAssembly = output;
-            CompilerResults results = compiler.CompileAssemblyFromSource(parameters, outputTb.Text);
-
-            if (results.Errors.Count > 0)
+            if (outputTb.Text[0] == 'u')
             {
-                string error_string = "";
-                foreach (CompilerError CompErr in results.Errors)
-                {
-                    error_string = "Line number " + CompErr.Line +
-                                ", Error Number: " + CompErr.ErrorNumber +
-                                ", '" + CompErr.ErrorText + ";" +
-                                Environment.NewLine + Environment.NewLine;
-                }
-                DialogResult error = MessageBox.Show(error_string, "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CSharpCodeProvider codeProvider = new CSharpCodeProvider();
+                ICodeCompiler compiler = codeProvider.CreateCompiler();
+                string output = "Out.exe";
+                ToolStripButton ButtonObject = (ToolStripButton)sender;
 
+                CompilerParameters parameters = new CompilerParameters();
+
+                //Make sure we generate an EXE, not a DLL
+                parameters.GenerateExecutable = true;
+                parameters.OutputAssembly = output;
+                CompilerResults results = compiler.CompileAssemblyFromSource(parameters, outputTb.Text);
+
+                if (results.Errors.Count > 0)
+                {
+                    string error_string = "";
+                    foreach (CompilerError CompErr in results.Errors)
+                    {
+                        error_string = "Line number " + CompErr.Line +
+                                    ", Error Number: " + CompErr.ErrorNumber +
+                                    ", '" + CompErr.ErrorText + ";" +
+                                    Environment.NewLine + Environment.NewLine;
+                    }
+                    DialogResult error = MessageBox.Show(error_string, "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                }
+                else
+                {
+                    //Successful Compile
+                    //If we clicked run then launch our EXE
+                    if (ButtonObject.Text == "Run") Process.Start(output);
+                }
             }
             else
             {
-                //Successful Compile
-                //If we clicked run then launch our EXE
-                if (ButtonObject.Text == "Run") Process.Start(output);
-            }        }
-
+                string powershellText = outputTb.Text;
+                System.Diagnostics.Process.Start("Powershell.exe", powershellText);
+            }
+        }
     }
 }
